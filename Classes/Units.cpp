@@ -58,6 +58,7 @@ void Unit::moveTo(const cocos2d::Vec2& target)
 void Unit::rotate(bool clockwise)
 {	
 	setRotation(clockwise? getRotation() + 5 : getRotation() - 5);
+	m_healthbar->setRotation(-getRotation());
 }
 
 void Unit::rotateTo(const cocos2d::Vec2& target)
@@ -66,6 +67,7 @@ void Unit::rotateTo(const cocos2d::Vec2& target)
 	auto radan = targetVect.getAngle();
 	auto angle = -CC_RADIANS_TO_DEGREES(radan);
 	setRotation(angle-90);
+	m_healthbar->setRotation(-getRotation());
 }
 
 
@@ -88,18 +90,22 @@ bool Unit::init(int health, float armor, int maxSpeed, const std::string& sprite
 	setContentSize(sprite->getContentSize());
 
 
-	m_healthbar = ui::LoadingBar::create("healthbar.png", 100);
+	m_healthbar = ui::LoadingBar::create("healthbar.png", ui::TextureResType::PLIST, 100);
 	m_healthbar->setName("HealthBar");
-	m_healthbar->setPosition(Vec2(0,0));
-	addChild(m_healthbar, 2);
+	m_healthbar->setPosition(Vec2::ZERO);
+	m_healthbar->setAnchorPoint(-Vec2(0, (getContentSize().height / 2)+5));
+	addChild(m_healthbar);
 
 	return true;
 }
 
 void Unit::update(float delta)
 {
-	m_healthbar->setPercent(m_health / m_maxHealth);
-
+	if (m_health >= 0)
+	{
+		m_healthbar->setPercent((float(m_health) / m_maxHealth)*100);
+	}
+	
 	if (getPhysicsBody()->getVelocity().getLength() > 1)
 	{
 		getPhysicsBody()->setVelocity(getPhysicsBody()->getVelocity()*0.9);
