@@ -229,7 +229,7 @@ Monster * Monster::createRandomMonster()
 }
 
 Monster::Monster():
-	Unit(), m_dmg(0), m_target(nullptr)
+	Unit(), m_dmg(0), m_target(nullptr), m_attackCd(1000), m_attacking(false)
 {
 }
 
@@ -240,6 +240,7 @@ bool Monster::init(int health, float armor, int maxSpeed, int dmg, const std::st
 		return false;
 	}
 	m_dmg = dmg;
+	m_lastAttack = utils::getTimeInMilliseconds();
 
 	return true;
 }
@@ -251,10 +252,17 @@ void Monster::update(float dt)
 	{
 		rotateTo(m_target->getPosition());
 		move(true);
+		if (m_attacking && (utils::getTimeInMilliseconds() - m_lastAttack) > m_attackCd)
+		{
+			m_target->hit(m_dmg);
+			m_lastAttack = utils::getTimeInMilliseconds();
+		}
 	}
+
+
 }
 
-void Monster::setTarget(Node * target)
+void Monster::setTarget(Unit * target)
 {
 	if (target) {
 		m_target = target;
@@ -264,4 +272,14 @@ void Monster::setTarget(Node * target)
 int Monster::getDmg()
 {
 	return m_dmg;
+}
+
+void Monster::startAttack()
+{
+	m_attacking = true;
+}
+
+void Monster::stopAttack()
+{
+	m_attacking = false;
 }

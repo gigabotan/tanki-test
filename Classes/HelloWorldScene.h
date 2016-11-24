@@ -34,8 +34,10 @@ public:
 
 	void processInput();
 	bool onContactBegin(cocos2d::PhysicsContact& contact);
+	bool onContactSeparate(cocos2d::PhysicsContact& contact);
 	void onContactMonsterMissile(Node* monster, Node* missile);
-	void onContactMonsterPlayer(Node* monster);
+	void onContactBeginMonsterPlayer(Node* monsterNode);
+	void onContactSeparateMonsterPlayer(Node* monsterNode);
 	void updateMonsters();
 	
 

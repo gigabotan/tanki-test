@@ -125,6 +125,7 @@ bool HelloWorld::init()
 	//adds contact event listener
 	auto contactListener = EventListenerPhysicsContact::create();
 	contactListener->onContactBegin = CC_CALLBACK_1(HelloWorld::onContactBegin, this);
+	contactListener->onContactSeparate = CC_CALLBACK_1(HelloWorld::onContactSeparate, this);
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(contactListener, this);
 
 
@@ -158,10 +159,13 @@ void HelloWorld::update(float delta)
 	// Register an update function that checks to see if the CTRL key is pressed
 	// and if it is displays how long, otherwise tell the user to press it
 
+	if (m_player->isDead())
+	{
+		Director::getInstance()->replaceScene(HelloWorld::createScene());
+	}
+	
 	processInput();
 	updateMonsters();
-
-
 
 
 }
@@ -222,7 +226,7 @@ bool HelloWorld::onContactBegin(cocos2d::PhysicsContact & contact)
 		{
 			if (nodeB->getTag() == NODE_TAG_PLAYER)
 			{
-				onContactMonsterPlayer(nodeA);
+				onContactBeginMonsterPlayer(nodeA);
 			}
 			else if (nodeB->getTag() == NODE_TAG_MISSILE)
 			{
@@ -235,7 +239,7 @@ bool HelloWorld::onContactBegin(cocos2d::PhysicsContact & contact)
 		{
 			if (nodeA->getTag() == NODE_TAG_PLAYER)
 			{
-				onContactMonsterPlayer(nodeB);
+				onContactBeginMonsterPlayer(nodeB);
 			}
 			else if (nodeA->getTag() == NODE_TAG_MISSILE)
 			{
@@ -257,6 +261,34 @@ bool HelloWorld::onContactBegin(cocos2d::PhysicsContact & contact)
 	return true;
 }
 
+bool HelloWorld::onContactSeparate(PhysicsContact & contact)
+{
+	auto nodeA = contact.getShapeA()->getBody()->getNode();
+	auto nodeB = contact.getShapeB()->getBody()->getNode();
+
+
+	if (nodeA && nodeB)
+	{
+		if (nodeA->getTag() == NODE_TAG_MONSTER)
+		{
+			if (nodeB->getTag() == NODE_TAG_PLAYER)
+			{
+				onContactSeparateMonsterPlayer(nodeA);
+			}
+
+		}
+		else if (nodeB->getTag() == NODE_TAG_MONSTER)
+		{
+			if (nodeA->getTag() == NODE_TAG_PLAYER)
+			{
+				onContactSeparateMonsterPlayer(nodeB);
+			}
+		}
+	}
+
+	return true;
+}
+
 void HelloWorld::onContactMonsterMissile(Node * monsterNode, Node * missileNode)
 {
 	Monster *monster = dynamic_cast<Monster *>(monsterNode);
@@ -273,19 +305,24 @@ void HelloWorld::onContactMonsterMissile(Node * monsterNode, Node * missileNode)
 	}
 }
 
-void HelloWorld::onContactMonsterPlayer(Node * monsterNode)
+void HelloWorld::onContactBeginMonsterPlayer(Node * monsterNode)
 {
 	Monster *monster = dynamic_cast<Monster *>(monsterNode);
 	if (monster && m_player)
 	{
-		m_player->hit(monster->getDmg());
-		if (m_player->isDead())
-		{
-			Director::getInstance()->replaceScene(HelloWorld::createScene());
-		}
+		monster->startAttack();
 	}
 }
 
+
+void HelloWorld::onContactSeparateMonsterPlayer(Node * monsterNode)
+{
+	Monster *monster = dynamic_cast<Monster *>(monsterNode);
+	if (monster && m_player)
+	{
+		monster->stopAttack();
+	}
+}
 
 void HelloWorld::updateMonsters()
 {

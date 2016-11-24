@@ -75,13 +75,18 @@ public:
 	virtual bool init(int health, float armor, int maxSpeed, int dmg, const std::string& spriteName);
 	virtual void update(float dt);
 
-	void setTarget(Node* target);
+	void setTarget(Unit* target);
 
 	int getDmg();
+	void startAttack();
+	void stopAttack();
 
 protected:
+	long long m_attackCd;
+	long long m_lastAttack;
+	bool m_attacking;
 	int m_dmg;
-	Node* m_target;
+	Unit* m_target;
 };
 
 
