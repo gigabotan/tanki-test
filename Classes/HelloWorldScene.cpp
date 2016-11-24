@@ -108,7 +108,7 @@ bool HelloWorld::init()
 			case EventKeyboard::KeyCode::KEY_Q:
 				m_player->changeWeapon(true);
 			break;
-			case EventKeyboard::KeyCode::KEY_E:
+			case EventKeyboard::KeyCode::KEY_W:
 				m_player->changeWeapon(false);
 			break;
 		}
@@ -179,19 +179,19 @@ void HelloWorld::toggleDebug()
 
 void HelloWorld::processInput()
 {
-	if (keys.count(EventKeyboard::KeyCode::KEY_LEFT_ARROW) || keys.count(EventKeyboard::KeyCode::KEY_A))
+	if (keys.count(EventKeyboard::KeyCode::KEY_LEFT_ARROW))
 	{
 		m_player->rotate(false);
 	}
-	if (keys.count(EventKeyboard::KeyCode::KEY_RIGHT_ARROW) || keys.count(EventKeyboard::KeyCode::KEY_D))
+	if (keys.count(EventKeyboard::KeyCode::KEY_RIGHT_ARROW))
 	{
 		m_player->rotate(true);
 	}
-	if (keys.count(EventKeyboard::KeyCode::KEY_UP_ARROW) || keys.count(EventKeyboard::KeyCode::KEY_W))
+	if (keys.count(EventKeyboard::KeyCode::KEY_UP_ARROW))
 	{
 		m_player->move(true);
 	}
-	if (keys.count(EventKeyboard::KeyCode::KEY_DOWN_ARROW) || keys.count(EventKeyboard::KeyCode::KEY_S))
+	if (keys.count(EventKeyboard::KeyCode::KEY_DOWN_ARROW))
 	{
 		m_player->move(false);
 	}
