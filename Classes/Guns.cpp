@@ -65,7 +65,9 @@ void Gun::fire()
 				auto pos = m_player->convertToWorldSpace(Vec2(0, m_player->getContentSize().height/2));
 				missile->setPosition(pos);
 				missile->getPhysicsBody()->applyImpulse(m_player->getDirection()*100);
-				missile->getPhysicsBody()->setContactTestBitmask(0xFF);
+				missile->getPhysicsBody()->setCategoryBitmask(0x000F);
+				missile->getPhysicsBody()->setContactTestBitmask(0xF0F0);
+				missile->getPhysicsBody()->setCollisionBitmask(0x0000);
 				getScene()->addChild(missile);
 				missile->setTag(3);
 			}
@@ -79,7 +81,9 @@ void Gun::fire()
 				auto pos = m_player->convertToWorldSpace(Vec2(0, m_player->getContentSize().height / 2));
 				missile->setPosition(pos);
 				missile->getPhysicsBody()->applyImpulse(m_player->getDirection() * 100);
-				missile->getPhysicsBody()->setContactTestBitmask(0xFF);
+				missile->getPhysicsBody()->setCategoryBitmask(0x000F);
+				missile->getPhysicsBody()->setContactTestBitmask(0xF0F0);
+				missile->getPhysicsBody()->setCollisionBitmask(0x0000);
 				getScene()->addChild(missile);
 
 

@@ -2,6 +2,7 @@
 #define Units_h__
 
 #include "cocos2d.h"
+#include "ui/CocosGUI.h"
 
 #include "Guns.h"
 
@@ -28,10 +29,13 @@ public:
 protected:
 	bool m_isDead;
 	int m_health;
+	int m_maxHealth;
 	float m_armor;
 	int m_maxSpeed;
 
 	std::string m_spriteName;
+	cocos2d::ui::LoadingBar * m_healthbar;
+	
 
 };
 

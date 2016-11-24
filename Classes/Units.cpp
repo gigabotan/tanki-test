@@ -3,7 +3,7 @@
 USING_NS_CC;
 
 Unit::Unit():
-	m_health(100), m_armor(1), m_maxSpeed(100)
+	m_health(100), m_maxHealth(100), m_armor(1), m_maxSpeed(100), m_healthbar(nullptr)
 {
 }
 
@@ -72,9 +72,11 @@ void Unit::rotateTo(const cocos2d::Vec2& target)
 bool Unit::init(int health, float armor, int maxSpeed, const std::string& spriteName)
 {	
 	m_health = health;
+	m_maxHealth = health;
 	m_armor = armor;
 	m_maxSpeed = maxSpeed;
 	m_spriteName = spriteName;
+	m_isDead = false;
 
 	auto sprite = Sprite::createWithSpriteFrameName(m_spriteName);
 	addChild(sprite);
@@ -86,11 +88,18 @@ bool Unit::init(int health, float armor, int maxSpeed, const std::string& sprite
 	setContentSize(sprite->getContentSize());
 
 
+	m_healthbar = ui::LoadingBar::create("healthbar.png", 100);
+	m_healthbar->setName("HealthBar");
+	m_healthbar->setPosition(Vec2(0,0));
+	addChild(m_healthbar, 2);
+
 	return true;
 }
 
 void Unit::update(float delta)
 {
+	m_healthbar->setPercent(m_health / m_maxHealth);
+
 	if (getPhysicsBody()->getVelocity().getLength() > 1)
 	{
 		getPhysicsBody()->setVelocity(getPhysicsBody()->getVelocity()*0.9);
@@ -186,17 +195,17 @@ Monster * Monster::create(int health, float armor, int maxSpeed, int dmg, const 
 
 Monster * Monster::createRed()
 {
-	return create(20, 1, 100, 10, "monster_red.png");
+	return create(20, 1, 50, 20, "monster_red.png");
 }
 
 Monster * Monster::createGreen()
 {
-	return create(30, 0.8, 50, 20, "monster_green.png");
+	return create(30, 0.8, 30, 40, "monster_green.png");
 }
 
 Monster * Monster::createBlue()
 {
-	return create(150, 0.5, 25, 30, "monster_blue.png");
+	return create(150, 0.5, 20, 100, "monster_blue.png");
 }
 
 Monster * Monster::createRandomMonster()
@@ -225,8 +234,6 @@ bool Monster::init(int health, float armor, int maxSpeed, int dmg, const std::st
 		return false;
 	}
 	m_dmg = dmg;
-	m_isDead = false;
-
 
 	return true;
 }

@@ -4,6 +4,21 @@
     <dict>
         <key>frames</key>
         <dict>
+            <key>healthbar.png</key>
+            <dict>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
+                <string>{0,0}</string>
+                <key>spriteSize</key>
+                <string>{8,2}</string>
+                <key>spriteSourceSize</key>
+                <string>{8,2}</string>
+                <key>textureRect</key>
+                <string>{{43,20},{8,2}}</string>
+                <key>textureRotated</key>
+                <false/>
+            </dict>
             <key>monster_blue.png</key>
             <dict>
                 <key>aliases</key>
@@ -78,7 +93,7 @@
             <key>size</key>
             <string>{64,64}</string>
             <key>smartupdate</key>
-            <string>$TexturePacker:SmartUpdate:04bea20ac8a18afef51e1a61045f00af:ab9de4b3def606ee8f48ad760a74e30e:e1a9b31caf258d7c92150a6ccbde6fbd$</string>
+            <string>$TexturePacker:SmartUpdate:cef1ba983dacabdbde23941f3d84ddf5:d5cd0a7e725a78ccbeeef7898f79a165:e1a9b31caf258d7c92150a6ccbde6fbd$</string>
             <key>textureFileName</key>
             <string>images.png</string>
         </dict>

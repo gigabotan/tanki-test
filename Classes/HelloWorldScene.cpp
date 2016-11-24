@@ -67,26 +67,30 @@ bool HelloWorld::init()
 
 
     
-	auto background = LayerColor::create(Color4B::BLUE, visibleSize.width, visibleSize.height);
+	auto background = LayerColor::create(Color4B(9, 73, 26, 255), visibleSize.width, visibleSize.height);
 	background->setPosition(origin);
 	addChild(background, -1);
 
 
 	// Wall around screen
 
-	auto node = Node::create();
-	node->addComponent(PhysicsBody::createEdgeBox(visibleSize));
-	node->setPosition(Vec2(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y));
-	node->getPhysicsBody()->setContactTestBitmask(0xF000);
-	this->addChild(node);
-	node->setTag(NODE_TAG_WALL);
+	auto wall = Node::create();
+	wall->addComponent(PhysicsBody::createEdgeBox(Size(visibleSize.width-10, visibleSize.height-10)));
+	wall->setPosition(Vec2(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y));
+	wall->getPhysicsBody()->setCategoryBitmask(0xF000);
+	wall->getPhysicsBody()->setContactTestBitmask(0x000F);
+	wall->getPhysicsBody()->setCollisionBitmask(0x0F00);
+	this->addChild(wall);
+	wall->setTag(NODE_TAG_WALL);
 
 	
 	//Add player
-	m_player = Player::create(100, 0.5, 200, "tank.png");
-	m_player->setScale(4.0);
+	m_player = Player::create(100, 0.5, 300, "tank.png");
+	m_player->setScale(3.0);
 	m_player->setPosition(Vec2(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y));
-	m_player->getPhysicsBody()->setContactTestBitmask(0x0FFF);
+	m_player->getPhysicsBody()->setCategoryBitmask(0x0F00);
+	m_player->getPhysicsBody()->setContactTestBitmask(0x00F0);
+	m_player->getPhysicsBody()->setCollisionBitmask(0xF000);
 	addChild(m_player);
 	m_player->setTag(NODE_TAG_PLAYER);
 
@@ -214,33 +218,39 @@ bool HelloWorld::onContactBegin(cocos2d::PhysicsContact & contact)
 
 	if (nodeA && nodeB)
 	{
-		if (nodeA->getTag() == NODE_TAG_MISSILE && nodeB->getTag() != NODE_TAG_MISSILE)
+		if (nodeA->getTag() == NODE_TAG_MONSTER )
 		{
-			if (nodeB->getTag() == NODE_TAG_MONSTER)
+			if (nodeB->getTag() == NODE_TAG_PLAYER)
 			{
-				onContactMonsterMissile(nodeB, nodeA);
-
+				onContactMonsterPlayer(nodeA);
 			}
-			nodeA->removeFromParentAndCleanup(true);
-		}
-		else if (nodeB->getTag() == NODE_TAG_MISSILE && nodeA->getTag() != NODE_TAG_MISSILE)
-		{
-			if (nodeA->getTag() == NODE_TAG_MONSTER)
+			else if (nodeB->getTag() == NODE_TAG_MISSILE)
 			{
 				onContactMonsterMissile(nodeA, nodeB);
+				nodeB->removeFromParentAndCleanup(true);
 			}
-			nodeB->removeFromParentAndCleanup(true);
 			
 		}
-		else if (nodeA->getTag() == NODE_TAG_MONSTER && nodeB->getTag() == NODE_TAG_PLAYER)
+		else if (nodeB->getTag() == NODE_TAG_MONSTER)
 		{
-			onContactMonsterPlayer(nodeA);
+			if (nodeA->getTag() == NODE_TAG_PLAYER)
+			{
+				onContactMonsterPlayer(nodeB);
+			}
+			else if (nodeA->getTag() == NODE_TAG_MISSILE)
+			{
+				onContactMonsterMissile(nodeB, nodeA);
+				nodeA->removeFromParentAndCleanup(true);
+			}
 		}
-		else if (nodeB->getTag() == NODE_TAG_MONSTER && nodeA->getTag() == NODE_TAG_PLAYER)
+		else if (nodeA->getTag() == NODE_TAG_WALL)
 		{
-			onContactMonsterPlayer(nodeB);
+			nodeB->removeFromParentAndCleanup(true);
 		}
-
+		else if (nodeB->getTag() == NODE_TAG_WALL)
+		{
+			nodeA->removeFromParentAndCleanup(true);
+		}
 	}
 
 	//bodies can collide
@@ -279,12 +289,24 @@ void HelloWorld::onContactMonsterPlayer(Node * monsterNode)
 
 void HelloWorld::updateMonsters()
 {
+
 	if (m_monsters < 10)
 	{
+		auto angle = RandomHelper::random_int(0, 360);
+		const static auto diagonal = [](){
+			auto width = Director::getInstance()->getVisibleSize().width;
+			auto height = Director::getInstance()->getVisibleSize().height;
+			return int(sqrt(width*width + height*height));
+		}();
+		auto radius = RandomHelper::random_int(diagonal / 2, diagonal);
+
+
 		auto monster = Monster::createRandomMonster();
-		monster->setScale(4.0);
-		monster->setPosition(m_player->getPosition() + Vec2(100, 100));
-		monster->getPhysicsBody()->setContactTestBitmask(0x0FFF);
+		monster->setScale(2.0);
+		monster->setPosition(Vec2(Director::getInstance()->getVisibleSize())/2 + Vec2(cosf(angle)*radius, sinf(angle)*radius));
+		monster->getPhysicsBody()->setContactTestBitmask(0x0F0F);
+		monster->getPhysicsBody()->setCollisionBitmask(0x00F0);
+		monster->getPhysicsBody()->setCategoryBitmask(0x00F0);
 		monster->setTarget(m_player);
 		addChild(monster);
 		monster->setTag(NODE_TAG_MONSTER);
