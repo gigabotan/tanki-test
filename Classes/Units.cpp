@@ -93,7 +93,7 @@ bool Unit::init(int health, float armor, int maxSpeed, const std::string& sprite
 	m_healthbar = ui::LoadingBar::create("healthbar.png", ui::TextureResType::PLIST, 100);
 	m_healthbar->setName("HealthBar");
 	m_healthbar->setPosition(Vec2::ZERO);
-	m_healthbar->setAnchorPoint(-Vec2(0, (getContentSize().height / 2)+5));
+	m_healthbar->setAnchorPoint(-Vec2(0, (getContentSize().height / 2)));
 	addChild(m_healthbar);
 
 	return true;
