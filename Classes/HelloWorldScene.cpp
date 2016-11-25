@@ -4,7 +4,7 @@
 
 USING_NS_CC;
 
-static enum NODE_TAG {
+enum NODE_TAG {
 	NODE_TAG_WALL,
 	NODE_TAG_PLAYER,
 	NODE_TAG_MONSTER,
